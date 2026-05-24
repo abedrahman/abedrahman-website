@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>abedrahman.com — Design Explorer v2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Newsreader:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&family=Lato:wght@300;400;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Red+Hat+Display:wght@300;400;500;600;700&family=Kanit:wght@300;400;500;600;700&family=Albert+Sans:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=Sora:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;700&family=Caveat:wght@400;500;600;700&family=Kalam:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ========== CONTROL PANEL (prototype-only) ========== */
+    .controls {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      background: rgba(20, 20, 20, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      color: #f0f0f0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 12px;
+      padding: 10px 16px;
+      display: flex;
+      gap: 12px 18px;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .controls__group { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+    .controls__label { text-transform: uppercase; letter-spacing: 0.08em; font-size: 10px; opacity: 0.55; margin-right: 4px; }
+    .controls select, .controls button {
+      background: rgba(255,255,255,0.06); color: #f0f0f0;
+      border: 1px solid rgba(255,255,255,0.15); border-radius: 4px;
+      padding: 5px 9px; font-family: inherit; font-size: 12px;
+      cursor: pointer; outline: none;
+    }
+    .controls select:hover, .controls button:hover { background: rgba(255,255,255,0.12); }
+    .controls .layout-btn.active { background: #f0f0f0; color: #111; border-color: #f0f0f0; }
+    .controls__layouts {
+      display: flex; gap: 4px; align-items: center;
+      max-width: 100%; overflow-x: auto;
+    }
+
+    /* ========== SHARED TOKENS ========== */
+    :root {
+      --bg: #f6f3ec; --bg-tint: #ede8db;
+      --text: #1a1815; --text-muted: #5a5249;
+      --accent: #8a4f2c; --rule: #d6cfbe;
+      --shadow: rgba(26, 24, 21, 0.08);
+      --font-main: 'Cormorant Garamond', Georgia, serif;
+      --font-weight-name: 500;
+      --font-weight-link: 500;
+      --letter-spacing-link: 0.18em;
+      --link-transform: uppercase;
+    }
+
+    /* === PALETTES === */
+    [data-theme="dark"][data-palette="warm-editorial"] {
+      --bg: #14110d; --bg-tint: #1d1915; --text: #e8e3d8; --text-muted: #9a8f7e;
+      --accent: #c89571; --rule: #2a251e; --shadow: rgba(0,0,0,0.4);
+    }
+    [data-palette="cool-minimal"] {
+      --bg: #fafafa; --bg-tint: #f0f0f0; --text: #111; --text-muted: #6b6b6b;
+      --accent: #2563eb; --rule: #e5e5e5; --shadow: rgba(0,0,0,0.06);
+    }
+    [data-theme="dark"][data-palette="cool-minimal"] {
+      --bg: #0a0a0a; --bg-tint: #161616; --text: #f5f5f5; --text-muted: #9a9a9a;
+      --accent: #60a5fa; --rule: #262626; --shadow: rgba(0,0,0,0.5);
+    }
+    [data-palette="technical"] {
+      --bg: #ffffff; --bg-tint: #f4f4f5; --text: #18181b; --text-muted: #71717a;
+      --accent: #16a34a; --rule: #e4e4e7; --shadow: rgba(0,0,0,0.05);
+    }
+    [data-theme="dark"][data-palette="technical"] {
+      --bg: #0c0e10; --bg-tint: #16181b; --text: #e8e8e8; --text-muted: #888c92;
+      --accent: #4ade80; --rule: #25282d; --shadow: rgba(0,0,0,0.45);
+    }
+    [data-palette="forest"] {
+      --bg: #f4f1ea; --bg-tint: #e8e3d6; --text: #1c2620; --text-muted: #5c6c63;
+      --accent: #5d7a4a; --rule: #cdc8b8; --shadow: rgba(28,38,32,0.08);
+    }
+    [data-theme="dark"][data-palette="forest"] {
+      --bg: #11150f; --bg-tint: #1a201a; --text: #d8dcc8; --text-muted: #8a9183;
+      --accent: #94b377; --rule: #252b22; --shadow: rgba(0,0,0,0.4);
+    }
+    [data-palette="sunset"] {
+      --bg: #0a0a0c; --bg-tint: #15151a; --text: #f5f5f5; --text-muted: #a8a8b2;
+      --accent: #25549b; --rule: #2a2a35; --shadow: rgba(0,0,0,0.5);
+    }
+    [data-theme="dark"][data-palette="sunset"] {
+      --bg: #0a0a0c; --bg-tint: #15151a; --text: #f5f5f5; --text-muted: #a8a8b2;
+      --accent: #25549b; --rule: #2a2a35; --shadow: rgba(0,0,0,0.5);
+    }
+    /* NEW PALETTES */
+    [data-palette="monochrome"] {
+      --bg: #ffffff; --bg-tint: #f5f5f5; --text: #000; --text-muted: #666;
+      --accent: #000; --rule: #d4d4d4; --shadow: rgba(0,0,0,0.08);
+    }
+    [data-theme="dark"][data-palette="monochrome"] {
+      --bg: #000; --bg-tint: #0a0a0a; --text: #fff; --text-muted: #999;
+      --accent: #fff; --rule: #2c2c2c; --shadow: rgba(0,0,0,0.5);
+    }
+    [data-palette="slate"] {
+      --bg: #eef2f6; --bg-tint: #e0e7ee; --text: #1e293b; --text-muted: #64748b;
+      --accent: #334155; --rule: #cbd5e1; --shadow: rgba(30,41,59,0.08);
+    }
+    [data-theme="dark"][data-palette="slate"] {
+      --bg: #0f172a; --bg-tint: #1e293b; --text: #e2e8f0; --text-muted: #94a3b8;
+      --accent: #94a3b8; --rule: #334155; --shadow: rgba(0,0,0,0.45);
+    }
+    [data-palette="cream-brutalist"] {
+      --bg: #f5efe0; --bg-tint: #ebe4d0; --text: #0a0a0a; --text-muted: #2a2a2a;
+      --accent: #ff4d2e; --rule: #0a0a0a; --shadow: rgba(0,0,0,0.15);
+    }
+    [data-theme="dark"][data-palette="cream-brutalist"] {
+      --bg: #0a0a0a; --bg-tint: #1a1a1a; --text: #f5efe0; --text-muted: #b8b3a3;
+      --accent: #ff6b4a; --rule: #f5efe0; --shadow: rgba(0,0,0,0.5);
+    }
+    [data-palette="paper"] {
+      --bg: #faf7f0; --bg-tint: #f0ebdb; --text: #1a1a1a; --text-muted: #555;
+      --accent: #8b2c1e; --rule: #d6cfb8; --shadow: rgba(26,26,26,0.06);
+    }
+    [data-theme="dark"][data-palette="paper"] {
+      --bg: #1a1815; --bg-tint: #25221c; --text: #f0ebdb; --text-muted: #a89e8a;
+      --accent: #c97560; --rule: #3a352c; --shadow: rgba(0,0,0,0.45);
+    }
+    [data-palette="coastal"] {
+      --bg: #f2f6f5; --bg-tint: #e3ecea; --text: #1f3a3d; --text-muted: #557678;
+      --accent: #4a8c8e; --rule: #c8d4d2; --shadow: rgba(31,58,61,0.08);
+    }
+    [data-theme="dark"][data-palette="coastal"] {
+      --bg: #0c1b1c; --bg-tint: #14282a; --text: #d6e4e3; --text-muted: #88a09f;
+      --accent: #7ab8b8; --rule: #233a3c; --shadow: rgba(0,0,0,0.4);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme]) {
+        --bg: #14110d; --bg-tint: #1d1915; --text: #e8e3d8; --text-muted: #9a8f7e;
+        --accent: #c89571; --rule: #2a251e; --shadow: rgba(0,0,0,0.4);
+      }
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--font-main); font-weight: 400;
+      min-height: 100vh;
+      transition: background 0.3s ease, color 0.3s ease;
+      -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    }
+    body { padding-top: 50px; }
+    .stage { min-height: calc(100vh - 50px); position: relative; }
+
+    .theme-toggle {
+      position: absolute; top: 1.5rem; right: 1.5rem;
+      background: transparent; border: 1px solid var(--rule);
+      color: var(--text-muted); width: 36px; height: 36px;
+      border-radius: 50%; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s ease; z-index: 5;
+    }
+    .theme-toggle:hover { color: var(--accent); border-color: var(--accent); }
+    .theme-toggle svg { width: 16px; height: 16px; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+    @keyframes typeIn { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: translateX(0); } }
+
+    /* Hide all layouts by default, show only active */
+    .layout { display: none; }
+    .stage[data-active="1"] .layout-1,
+    .stage[data-active="2"] .layout-2,
+    .stage[data-active="3"] .layout-3,
+    .stage[data-active="4"] .layout-4,
+    .stage[data-active="5"] .layout-5,
+    .stage[data-active="6"] .layout-6,
+    .stage[data-active="7"] .layout-7,
+    .stage[data-active="8"] .layout-8,
+    .stage[data-active="9"] .layout-9,
+    .stage[data-active="10"] .layout-10,
+    .stage[data-active="11"] .layout-11,
+    .stage[data-active="12"] .layout-12,
+    .stage[data-active="13"] .layout-13,
+    .stage[data-active="14"] .layout-14,
+    .stage[data-active="15"] .layout-15 { display: flex; }
+
+    /* ========== LAYOUT 1: Centered ========== */
+    .layout-1 { flex-direction: column; align-items: center; justify-content: center; padding: 4rem 1.5rem; min-height: calc(100vh - 50px); }
+    .layout-1 .container { max-width: 480px; width: 100%; text-align: center; animation: fadeIn 0.8s ease-out; }
+    .layout-1 .portrait { width: 200px; height: 200px; border-radius: 50%; object-fit: cover; margin: 0 auto 2.5rem; filter: grayscale(0.2); box-shadow: 0 8px 32px var(--shadow); transition: filter 0.4s ease; }
+    .layout-1 .portrait:hover { filter: grayscale(0); }
+    .layout-1 .name { font-size: 3.5rem; font-weight: var(--font-weight-name); letter-spacing: -0.01em; line-height: 1; margin-bottom: 1rem; }
+    .layout-1 .tagline { font-style: italic; font-size: 1.35rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 2.5rem; }
+    .layout-1 .rule { width: 60px; height: 1px; background: var(--rule); margin: 0 auto 2.5rem; }
+    .layout-1 .links { list-style: none; display: flex; flex-direction: column; gap: 0.85rem; }
+    .layout-1 .links a { color: var(--text); text-decoration: none; font-size: 0.95rem; letter-spacing: var(--letter-spacing-link); text-transform: var(--link-transform); font-weight: var(--font-weight-link); font-family: var(--font-main); padding: 0.5rem 0; display: inline-block; position: relative; transition: color 0.2s ease; }
+    .layout-1 .links a::after { content: ''; position: absolute; left: 50%; bottom: 0.35rem; width: 0; height: 1px; background: var(--accent); transition: width 0.3s ease, left 0.3s ease; }
+    .layout-1 .links a:hover { color: var(--accent); }
+    .layout-1 .links a:hover::after { width: 60%; left: 20%; }
+
+    /* ========== LAYOUT 2: Text-Forward ========== */
+    .layout-2 { flex-direction: column; justify-content: center; align-items: flex-start; padding: 4rem 2rem; max-width: 640px; margin: 0 auto; min-height: calc(100vh - 50px); }
+    .layout-2 .container { width: 100%; animation: fadeIn 0.8s ease-out; }
+    .layout-2 .header { display: flex; align-items: center; gap: 1.25rem; margin-bottom: 2.5rem; }
+    .layout-2 .portrait { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; filter: grayscale(0.2); box-shadow: 0 4px 16px var(--shadow); transition: filter 0.4s ease; flex-shrink: 0; }
+    .layout-2 .portrait:hover { filter: grayscale(0); }
+    .layout-2 .name { font-size: 2.75rem; font-weight: var(--font-weight-name); letter-spacing: -0.01em; line-height: 1; }
+    .layout-2 .tagline { font-style: italic; font-size: 1.5rem; color: var(--text); line-height: 1.45; margin-bottom: 2rem; max-width: 28ch; }
+    .layout-2 .bio { font-size: 1.15rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 3rem; max-width: 52ch; }
+    .layout-2 .bio em { color: var(--text); font-style: italic; }
+    .layout-2 .rule { width: 40px; height: 1px; background: var(--rule); margin-bottom: 2rem; }
+    .layout-2 .links-label { font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1rem; font-weight: 500; font-family: var(--font-main); }
+    .layout-2 .links { list-style: none; display: flex; flex-wrap: wrap; gap: 0 1.75rem; row-gap: 0.4rem; }
+    .layout-2 .links a { color: var(--text); text-decoration: none; font-size: 1.1rem; font-weight: 500; padding: 0.25rem 0; display: inline-block; position: relative; transition: color 0.2s ease; font-family: var(--font-main); }
+    .layout-2 .links a::after { content: ''; position: absolute; left: 0; bottom: 0.1rem; width: 0; height: 1px; background: var(--accent); transition: width 0.3s ease; }
+    .layout-2 .links a:hover { color: var(--accent); }
+    .layout-2 .links a:hover::after { width: 100%; }
+
+    /* ========== LAYOUT 3: Index Card ========== */
+    .layout-3 {
+      min-height: calc(100vh - 50px);
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 1.5rem;
+    }
+    .layout-3 .card {
+      max-width: 680px; width: 100%;
+      background: var(--bg-tint);
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 0;
+      box-shadow: 0 10px 40px var(--shadow);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+      animation: fadeIn 0.8s ease-out;
+    }
+    .layout-3 .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; bottom: 0;
+      width: 8px;
+      background: var(--accent);
+      z-index: 2;
+    }
+    .layout-3 .portrait-side {
+      background-image: url('https://i.imgur.com/4XM5DzA.jpg');
+      background-size: cover; background-position: center;
+      filter: grayscale(0.3);
+      min-height: 280px;
+    }
+    .layout-3 .content {
+      padding: 2rem 2.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .layout-3 .label {
+      font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--text-muted); margin-bottom: 0.5rem; font-weight: 600;
+    }
+    .layout-3 .name {
+      font-size: 2.25rem; font-weight: var(--font-weight-name);
+      line-height: 1.05; margin-bottom: 0.6rem;
+      letter-spacing: -0.01em;
+    }
+    .layout-3 .tagline {
+      font-style: italic; color: var(--text-muted);
+      font-size: 1.05rem; line-height: 1.5;
+      margin-bottom: 1.5rem;
+    }
+    .layout-3 .divider { width: 40px; height: 2px; background: var(--accent); margin-bottom: 1.25rem; }
+    .layout-3 .links {
+      list-style: none;
+      display: flex; flex-wrap: wrap;
+      gap: 0.4rem 1.25rem;
+    }
+    .layout-3 .links a {
+      color: var(--text); text-decoration: none;
+      font-size: 0.95rem; font-weight: 500;
+      transition: color 0.2s ease;
+      font-family: var(--font-main);
+      padding: 0.15rem 0;
+      border-bottom: 1px solid transparent;
+    }
+    .layout-3 .links a:hover {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+    @media (max-width: 600px) {
+      .layout-3 .card { grid-template-columns: 1fr; }
+      .layout-3 .portrait-side { min-height: 200px; }
+    }
+
+    /* ========== LAYOUT 4: Successor ========== */
+    .layout-4 { min-height: calc(100vh - 50px); padding: 4rem 2rem; position: relative; overflow: hidden; }
+    .layout-4::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(var(--rule) 1px, transparent 1px), linear-gradient(90deg, var(--rule) 1px, transparent 1px); background-size: 60px 60px; opacity: 0.3; pointer-events: none; }
+    .layout-4 .container { max-width: 680px; margin: 2rem auto; position: relative; animation: fadeIn 0.8s ease-out; background: var(--bg); padding: 3rem 2.5rem; border: 1px solid var(--rule); }
+    .layout-4 .marker { font-size: 0.75rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 2rem; display: flex; align-items: center; gap: 12px; }
+    .layout-4 .marker::before { content: ''; width: 24px; height: 1px; background: var(--accent); }
+    .layout-4 .top { display: grid; grid-template-columns: auto 1fr; gap: 1.75rem; align-items: center; margin-bottom: 2rem; }
+    .layout-4 .portrait { width: 100px; height: 100px; object-fit: cover; filter: grayscale(0.4) contrast(1.05); border: 1px solid var(--rule); transition: filter 0.4s ease; }
+    .layout-4 .portrait:hover { filter: grayscale(0); }
+    .layout-4 .name { font-size: 2.5rem; font-weight: var(--font-weight-name); line-height: 1.05; letter-spacing: -0.015em; }
+    .layout-4 .tagline { font-size: 1.25rem; font-style: italic; color: var(--text-muted); line-height: 1.5; margin-bottom: 2.5rem; padding-left: 1rem; border-left: 2px solid var(--accent); }
+    .layout-4 .links-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; list-style: none; border-top: 1px solid var(--rule); }
+    .layout-4 .links-grid li { border-bottom: 1px solid var(--rule); }
+    .layout-4 .links-grid li:nth-child(odd) { border-right: 1px solid var(--rule); }
+    .layout-4 .links-grid li:nth-child(5) { grid-column: 1 / -1; }
+    .layout-4 .links-grid a { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; color: var(--text); text-decoration: none; font-size: 1rem; font-weight: 500; transition: background 0.2s ease, color 0.2s ease; font-family: var(--font-main); }
+    .layout-4 .links-grid a::after { content: '↗'; opacity: 0.4; transition: opacity 0.2s ease, transform 0.2s ease; }
+    .layout-4 .links-grid a:hover { background: var(--bg-tint); color: var(--accent); }
+    .layout-4 .links-grid a:hover::after { opacity: 1; transform: translate(2px, -2px); }
+
+    /* ========== LAYOUT 5: Editorial ========== */
+    .layout-5 { min-height: calc(100vh - 50px); padding: 4rem 2rem; align-items: center; }
+    .layout-5 .container { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 280px 1fr; gap: 3.5rem; align-items: start; animation: fadeIn 0.8s ease-out; }
+    .layout-5 .left { position: sticky; top: 100px; }
+    .layout-5 .portrait { width: 100%; aspect-ratio: 1; object-fit: cover; filter: grayscale(0.15); transition: filter 0.4s ease; }
+    .layout-5 .portrait:hover { filter: grayscale(0); }
+    .layout-5 .caption { font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); margin-top: 1rem; text-align: right; }
+    .layout-5 .name { font-size: 4.5rem; font-weight: var(--font-weight-name); line-height: 0.95; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+    .layout-5 .underline { width: 80px; height: 2px; background: var(--accent); margin-bottom: 2rem; }
+    .layout-5 .tagline { font-style: italic; font-size: 1.6rem; line-height: 1.4; color: var(--text); margin-bottom: 2rem; }
+    .layout-5 .bio { font-size: 1.1rem; color: var(--text-muted); line-height: 1.75; margin-bottom: 3rem; max-width: 50ch; }
+    .layout-5 .links { list-style: none; display: flex; flex-direction: column; gap: 0.25rem; border-top: 1px solid var(--rule); padding-top: 1.5rem; }
+    .layout-5 .links a { display: flex; justify-content: space-between; align-items: baseline; padding: 0.75rem 0; color: var(--text); text-decoration: none; font-size: 1.15rem; font-weight: 500; border-bottom: 1px dotted var(--rule); transition: color 0.2s ease, padding-left 0.2s ease; font-family: var(--font-main); }
+    .layout-5 .links a span { font-size: 0.7rem; letter-spacing: 0.2em; color: var(--text-muted); text-transform: uppercase; transition: color 0.2s ease; }
+    .layout-5 .links a:hover { color: var(--accent); padding-left: 0.5rem; }
+    .layout-5 .links a:hover span { color: var(--accent); }
+
+    /* ========== LAYOUT 6: Brutalist ========== */
+    .layout-6 { min-height: calc(100vh - 50px); padding: 2rem; flex-direction: column; }
+    .layout-6 .container { max-width: 1200px; margin: 0 auto; width: 100%; animation: fadeIn 0.6s ease-out; }
+    .layout-6 .top-bar { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 3px solid var(--text); padding-bottom: 1rem; margin-bottom: 0; }
+    .layout-6 .top-bar .label { font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 700; font-family: var(--font-main); }
+    .layout-6 .massive-name { font-size: clamp(5rem, 15vw, 12rem); font-weight: 700; line-height: 0.85; letter-spacing: -0.04em; margin: 2rem 0; word-break: break-word; }
+    .layout-6 .massive-name span { color: var(--accent); }
+    .layout-6 .mid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; border-top: 3px solid var(--text); padding-top: 2rem; }
+    .layout-6 .portrait { width: 100%; max-width: 280px; height: 280px; object-fit: cover; filter: grayscale(1) contrast(1.2); border: 3px solid var(--text); transition: filter 0.3s ease; }
+    .layout-6 .portrait:hover { filter: grayscale(0); }
+    .layout-6 .tagline { font-size: 2rem; font-weight: 500; line-height: 1.2; font-style: italic; }
+    .layout-6 .links-strip { margin-top: 2rem; padding-top: 1rem; border-top: 3px solid var(--text); display: flex; flex-wrap: wrap; gap: 1.5rem; }
+    .layout-6 .links-strip a { color: var(--text); text-decoration: none; font-weight: 700; font-size: 1.25rem; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.5rem 1rem; border: 2px solid var(--text); transition: all 0.15s ease; font-family: var(--font-main); }
+    .layout-6 .links-strip a:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); transform: translate(-3px, -3px); box-shadow: 4px 4px 0 var(--text); }
+
+    /* ========== LAYOUT 7: Terminal / CLI ========== */
+    .layout-7 { min-height: calc(100vh - 50px); padding: 3rem 1.5rem; align-items: flex-start; justify-content: center; font-family: 'JetBrains Mono', 'Courier New', monospace !important; }
+    .layout-7 * { font-family: 'JetBrains Mono', 'Courier New', monospace !important; }
+    .layout-7 .container { max-width: 720px; width: 100%; animation: fadeIn 0.5s ease-out; }
+    .layout-7 .term-window { background: var(--bg-tint); border-radius: 8px; overflow: hidden; box-shadow: 0 20px 60px var(--shadow); border: 1px solid var(--rule); }
+    .layout-7 .term-bar { background: var(--rule); padding: 10px 14px; display: flex; gap: 8px; align-items: center; }
+    .layout-7 .term-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--text-muted); opacity: 0.5; }
+    .layout-7 .term-title { margin-left: 12px; font-size: 0.75rem; color: var(--text-muted); }
+    .layout-7 .term-body { padding: 1.5rem 1.5rem 2rem; font-size: 0.95rem; line-height: 1.7; }
+    .layout-7 .prompt { color: var(--accent); }
+    .layout-7 .typed { animation: typeIn 0.5s ease-out both; }
+    .layout-7 .typed:nth-child(2) { animation-delay: 0.3s; }
+    .layout-7 .typed:nth-child(3) { animation-delay: 0.6s; }
+    .layout-7 .typed:nth-child(4) { animation-delay: 0.9s; }
+    .layout-7 .output { color: var(--text-muted); margin-bottom: 0.5rem; }
+    .layout-7 .output strong { color: var(--text); font-weight: 700; }
+    .layout-7 .links-list { list-style: none; margin: 0.5rem 0 1.25rem; }
+    .layout-7 .links-list li::before { content: '→ '; color: var(--accent); }
+    .layout-7 .links-list a { color: var(--text); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--rule); transition: text-decoration-color 0.2s ease; }
+    .layout-7 .links-list a:hover { text-decoration-color: var(--accent); color: var(--accent); }
+    .layout-7 .cursor { display: inline-block; width: 9px; height: 1.1em; background: var(--accent); animation: blink 1s infinite; vertical-align: -3px; margin-left: 2px; }
+    .layout-7 .portrait-ascii { width: 80px; height: 80px; border-radius: 4px; object-fit: cover; filter: grayscale(1) contrast(1.1); margin-bottom: 1rem; border: 1px solid var(--rule); }
+
+    /* ========== LAYOUT 8: Card Stack ========== */
+    .layout-8 { min-height: calc(100vh - 50px); padding: 2rem; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    .layout-8::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 20% 20%, var(--accent) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, var(--accent) 0%, transparent 50%); opacity: 0.15; pointer-events: none; }
+    .layout-8::after { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, var(--text) 0.5px, transparent 0.5px); background-size: 24px 24px; opacity: 0.05; pointer-events: none; }
+    .layout-8 .card { background: var(--bg-tint); padding: 3rem 2.5rem; border-radius: 20px; max-width: 480px; width: 100%; position: relative; box-shadow: 0 30px 80px var(--shadow), 0 0 0 1px var(--rule); animation: fadeIn 0.8s ease-out; }
+    .layout-8 .card::before, .layout-8 .card::after { content: ''; position: absolute; left: 8%; right: 8%; height: 60%; border-radius: 20px; background: var(--bg-tint); border: 1px solid var(--rule); z-index: -1; }
+    .layout-8 .card::before { top: -12px; opacity: 0.6; }
+    .layout-8 .card::after { top: -24px; opacity: 0.3; }
+    .layout-8 .portrait { width: 88px; height: 88px; border-radius: 50%; object-fit: cover; margin-bottom: 1.5rem; border: 3px solid var(--bg); box-shadow: 0 4px 12px var(--shadow); }
+    .layout-8 .name { font-size: 2.25rem; font-weight: var(--font-weight-name); line-height: 1.1; margin-bottom: 0.75rem; }
+    .layout-8 .tagline { font-style: italic; color: var(--text-muted); font-size: 1.1rem; line-height: 1.5; margin-bottom: 1.75rem; }
+    .layout-8 .links { list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .layout-8 .links a { display: inline-block; padding: 0.5rem 1rem; background: var(--bg); border: 1px solid var(--rule); border-radius: 999px; color: var(--text); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: all 0.2s ease; font-family: var(--font-main); }
+    .layout-8 .links a:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); transform: translateY(-2px); }
+
+    /* ========== LAYOUT 9: Sticker Sheet ========== */
+    .layout-9 {
+      min-height: calc(100vh - 50px);
+      padding: 4rem 2rem;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .layout-9 .container {
+      max-width: 560px;
+      width: 100%;
+      text-align: center;
+      animation: fadeIn 0.8s ease-out;
+    }
+    .layout-9 .portrait {
+      width: 140px; height: 140px;
+      border-radius: 50%; object-fit: cover;
+      filter: grayscale(0.2);
+      margin: 0 auto 1.5rem;
+      box-shadow: 0 6px 20px var(--shadow);
+      transform: rotate(-3deg);
+      transition: transform 0.3s ease, filter 0.4s ease;
+      border: 4px solid var(--bg);
+    }
+    .layout-9 .portrait:hover {
+      transform: rotate(0deg);
+      filter: grayscale(0);
+    }
+    .layout-9 .name {
+      font-size: 3rem;
+      font-weight: var(--font-weight-name);
+      line-height: 1;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.015em;
+    }
+    .layout-9 .tagline {
+      font-style: italic;
+      color: var(--text-muted);
+      font-size: 1.15rem;
+      line-height: 1.5;
+      margin-bottom: 3rem;
+    }
+    .layout-9 .stickers {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.85rem;
+    }
+    .layout-9 .stickers a {
+      display: inline-block;
+      padding: 0.65rem 1.25rem;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      font-family: var(--font-main);
+      border-radius: 8px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 3px 0 rgba(0,0,0,0.18), 0 5px 12px var(--shadow);
+      letter-spacing: 0.01em;
+    }
+    .layout-9 .stickers li:nth-child(1) a { background: var(--accent); color: var(--bg); transform: rotate(-2deg); }
+    .layout-9 .stickers li:nth-child(2) a { background: var(--text); color: var(--bg); transform: rotate(1.5deg); }
+    .layout-9 .stickers li:nth-child(3) a { background: var(--bg-tint); color: var(--text); transform: rotate(-1deg); border: 2px solid var(--text); }
+    .layout-9 .stickers li:nth-child(4) a { background: var(--accent); color: var(--bg); transform: rotate(2deg); }
+    .layout-9 .stickers li:nth-child(5) a { background: var(--text); color: var(--bg); transform: rotate(-1.5deg); }
+    .layout-9 .stickers a:hover {
+      transform: rotate(0deg) translateY(-3px) scale(1.05);
+      box-shadow: 0 5px 0 rgba(0,0,0,0.2), 0 10px 20px var(--shadow);
+      z-index: 2;
+    }
+
+    /* ========== LAYOUT 10: Centered Minimal (business card) ========== */
+    .layout-10 { min-height: calc(100vh - 50px); flex-direction: column; align-items: center; justify-content: center; padding: 4rem 1.5rem; }
+    .layout-10 .container { text-align: center; animation: fadeIn 0.8s ease-out; }
+    .layout-10 .portrait { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; margin-bottom: 2rem; filter: grayscale(1); }
+    .layout-10 .name { font-size: 1.75rem; font-weight: var(--font-weight-name); margin-bottom: 0.5rem; letter-spacing: 0.02em; }
+    .layout-10 .tagline { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 2.5rem; font-style: italic; }
+    .layout-10 .links { list-style: none; display: flex; gap: 0; flex-wrap: wrap; justify-content: center; }
+    .layout-10 .links li { display: flex; align-items: center; }
+    .layout-10 .links li:not(:last-child)::after { content: '·'; margin: 0 0.85rem; color: var(--text-muted); }
+    .layout-10 .links a { color: var(--text); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s ease; font-family: var(--font-main); }
+    .layout-10 .links a:hover { color: var(--accent); }
+
+    /* ========== LAYOUT 11: Resume / CV ========== */
+    .layout-11 { min-height: calc(100vh - 50px); padding: 4rem 2rem; align-items: flex-start; justify-content: center; }
+    .layout-11 .container { max-width: 640px; width: 100%; animation: fadeIn 0.8s ease-out; }
+    .layout-11 .header { margin-bottom: 3rem; }
+    .layout-11 .name { font-size: 2rem; font-weight: var(--font-weight-name); margin-bottom: 0.25rem; }
+    .layout-11 .subtitle { font-size: 1rem; color: var(--text-muted); font-style: italic; }
+    .layout-11 .section { margin-bottom: 2.5rem; }
+    .layout-11 .section-label { font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.75rem; font-weight: 600; }
+    .layout-11 .section-body { font-size: 1.05rem; line-height: 1.7; }
+    .layout-11 .links { list-style: none; }
+    .layout-11 .links li { padding: 0.4rem 0; border-bottom: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: baseline; }
+    .layout-11 .links li:last-child { border-bottom: none; }
+    .layout-11 .links a { color: var(--text); text-decoration: none; font-weight: 500; font-size: 1rem; font-family: var(--font-main); }
+    .layout-11 .links a:hover { color: var(--accent); }
+    .layout-11 .links .url { font-size: 0.85rem; color: var(--text-muted); }
+
+    /* ========== LAYOUT 12: Vertical Timeline ========== */
+    .layout-12 { min-height: calc(100vh - 50px); padding: 4rem 2rem; flex-direction: column; align-items: center; justify-content: flex-start; }
+    .layout-12 .container { max-width: 480px; width: 100%; animation: fadeIn 0.8s ease-out; }
+    .layout-12 .header { text-align: center; margin-bottom: 3rem; }
+    .layout-12 .portrait { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; filter: grayscale(0.2); margin-bottom: 1.5rem; box-shadow: 0 4px 16px var(--shadow); }
+    .layout-12 .name { font-size: 2.5rem; font-weight: var(--font-weight-name); line-height: 1; margin-bottom: 0.5rem; }
+    .layout-12 .tagline { font-style: italic; color: var(--text-muted); font-size: 1.1rem; }
+    .layout-12 .timeline { position: relative; padding-left: 2.5rem; }
+    .layout-12 .timeline::before { content: ''; position: absolute; left: 7px; top: 8px; bottom: 8px; width: 2px; background: var(--rule); }
+    .layout-12 .node { position: relative; padding-bottom: 2rem; }
+    .layout-12 .node:last-child { padding-bottom: 0; }
+    .layout-12 .node::before { content: ''; position: absolute; left: -2.5rem; top: 0.3rem; width: 16px; height: 16px; border-radius: 50%; background: var(--bg); border: 2px solid var(--accent); transition: background 0.2s ease; }
+    .layout-12 .node:hover::before { background: var(--accent); }
+    .layout-12 .node a { display: block; color: var(--text); text-decoration: none; transition: color 0.2s ease; }
+    .layout-12 .node a:hover { color: var(--accent); }
+    .layout-12 .node-title { font-size: 1.25rem; font-weight: 500; line-height: 1.2; margin-bottom: 0.2rem; }
+    .layout-12 .node-desc { font-size: 0.85rem; color: var(--text-muted); }
+
+    /* ========== LAYOUT 13: Diagonal Asymmetry ========== */
+    .layout-13 { min-height: calc(100vh - 50px); padding: 4rem 2rem; position: relative; overflow: hidden; align-items: center; justify-content: center; }
+    .layout-13::before { content: ''; position: absolute; top: -50%; left: -10%; right: -10%; height: 200%; background: var(--bg-tint); transform: rotate(-8deg); transform-origin: center; opacity: 0.5; pointer-events: none; }
+    .layout-13 .container { position: relative; max-width: 720px; width: 100%; animation: fadeIn 0.8s ease-out; transform: rotate(-2deg); }
+    .layout-13 .container > * { transform: rotate(2deg); }
+    .layout-13 .portrait { width: 240px; height: 240px; object-fit: cover; filter: grayscale(0.3); display: block; margin-bottom: 1.5rem; transform: rotate(-3deg) !important; box-shadow: 0 15px 40px var(--shadow); }
+    .layout-13 .portrait:hover { filter: grayscale(0); }
+    .layout-13 .name { font-size: 4rem; font-weight: var(--font-weight-name); line-height: 0.95; letter-spacing: -0.02em; margin-bottom: 1rem; margin-left: -1rem; }
+    .layout-13 .tagline { font-style: italic; font-size: 1.4rem; color: var(--text); margin-bottom: 2rem; margin-left: 3rem; max-width: 32ch; }
+    .layout-13 .links { list-style: none; display: flex; flex-wrap: wrap; gap: 1.25rem; margin-left: 1.5rem; }
+    .layout-13 .links a { color: var(--text); text-decoration: none; font-weight: 500; font-size: 1.1rem; padding-bottom: 2px; border-bottom: 2px solid var(--accent); transition: background 0.2s ease, color 0.2s ease, padding 0.2s ease; font-family: var(--font-main); }
+    .layout-13 .links a:hover { background: var(--accent); color: var(--bg); padding: 2px 6px; }
+
+    /* ========== LAYOUT 14: Geometric Monogram ========== */
+    .layout-14 { min-height: calc(100vh - 50px); flex-direction: column; align-items: center; justify-content: center; padding: 4rem 1.5rem; }
+    .layout-14 .container { text-align: center; max-width: 460px; animation: fadeIn 0.8s ease-out; }
+    .layout-14 .monogram { display: inline-block; margin-bottom: 2rem; }
+    .layout-14 .monogram svg { display: block; }
+    .layout-14 .monogram svg .stroke { stroke: var(--text); transition: stroke 0.3s ease; }
+    .layout-14 .monogram svg .accent { stroke: var(--accent); transition: stroke 0.3s ease; }
+    .layout-14 .name { font-size: 2.5rem; font-weight: var(--font-weight-name); letter-spacing: 0.04em; margin-bottom: 0.5rem; text-transform: uppercase; }
+    .layout-14 .tagline { font-style: italic; color: var(--text-muted); font-size: 1.05rem; margin-bottom: 2rem; line-height: 1.5; }
+    .layout-14 .rule { width: 40px; height: 1px; background: var(--accent); margin: 0 auto 2rem; }
+    .layout-14 .links { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .layout-14 .links a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500; transition: color 0.2s ease, letter-spacing 0.2s ease; font-family: var(--font-main); }
+    .layout-14 .links a:hover { color: var(--accent); letter-spacing: 0.24em; }
+    .layout-14 .portrait-small { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; filter: grayscale(1); margin: 2rem auto 0; opacity: 0.6; display: block; }
+
+    /* ========== LAYOUT 15: Notebook ========== */
+    .layout-15 {
+      min-height: calc(100vh - 50px);
+      padding: 4rem 2rem;
+      align-items: flex-start;
+      justify-content: center;
+      position: relative;
+    }
+    .layout-15 .page {
+      max-width: 620px;
+      width: 100%;
+      background: var(--bg-tint);
+      padding: 3rem 3rem 3rem 5.5rem;
+      position: relative;
+      box-shadow: 0 12px 40px var(--shadow), 0 1px 0 rgba(0,0,0,0.04);
+      animation: fadeIn 0.8s ease-out;
+      background-image:
+        repeating-linear-gradient(to bottom, transparent, transparent 31px, var(--rule) 31px, var(--rule) 32px);
+      background-position: 0 4.5rem;
+    }
+    .layout-15 .page::before {
+      content: '';
+      position: absolute;
+      left: 3.5rem;
+      top: 0; bottom: 0;
+      width: 1px;
+      background: var(--accent);
+      opacity: 0.5;
+    }
+    .layout-15 .deckle {
+      position: absolute;
+      right: -2px;
+      top: 0; bottom: 0;
+      width: 4px;
+      background: linear-gradient(to bottom, var(--bg-tint) 0%, var(--bg-tint) 4%, transparent 4.5%, transparent 9%, var(--bg-tint) 9.5%, var(--bg-tint) 13.5%, transparent 14%, transparent 18%, var(--bg-tint) 18.5%);
+      background-size: 100% 22px;
+    }
+    .layout-15 .date {
+      font-family: 'Caveat', cursive;
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      transform: rotate(-1deg);
+      display: inline-block;
+    }
+    .layout-15 .name {
+      font-size: 2.5rem;
+      font-weight: var(--font-weight-name);
+      line-height: 1.05;
+      margin-bottom: 0.4rem;
+      letter-spacing: -0.01em;
+    }
+    .layout-15 .tagline {
+      font-style: italic;
+      color: var(--text-muted);
+      font-size: 1.15rem;
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px dashed var(--rule);
+    }
+    .layout-15 .body {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 1.5rem;
+      align-items: start;
+      margin-bottom: 2rem;
+    }
+    .layout-15 .portrait {
+      width: 110px; height: 110px;
+      object-fit: cover;
+      filter: grayscale(1);
+      box-shadow: 0 3px 12px var(--shadow);
+      transform: rotate(-2deg);
+      border: 6px solid var(--bg);
+      transition: transform 0.3s ease;
+    }
+    .layout-15 .portrait:hover {
+      transform: rotate(0deg) scale(1.04);
+    }
+    .layout-15 .note {
+      font-size: 1.05rem;
+      line-height: 1.65;
+      color: var(--text);
+    }
+    .layout-15 .margin-note {
+      font-family: 'Caveat', cursive;
+      font-size: 1rem;
+      color: var(--accent);
+      transform: rotate(-2deg);
+      margin: 0.4rem 0 1rem;
+      display: inline-block;
+    }
+    .layout-15 .links-label {
+      font-family: 'Kalam', cursive;
+      font-size: 1rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.04em;
+    }
+    .layout-15 .links {
+      list-style: none;
+    }
+    .layout-15 .links li {
+      padding: 0.45rem 0;
+      display: flex;
+      align-items: baseline;
+      gap: 0.85rem;
+    }
+    .layout-15 .links li::before {
+      content: '☐';
+      color: var(--accent);
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+    .layout-15 .links a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 1.05rem;
+      font-weight: 500;
+      transition: color 0.2s ease;
+      font-family: var(--font-main);
+    }
+    .layout-15 .links a:hover {
+      color: var(--accent);
+      text-decoration: underline;
+      text-decoration-style: wavy;
+      text-decoration-color: var(--accent);
+      text-underline-offset: 4px;
+    }
+
+    @media (max-width: 700px) {
+      .layout-5 .container { grid-template-columns: 1fr; gap: 2rem; }
+      .layout-5 .left { position: static; max-width: 200px; }
+      .layout-5 .name { font-size: 3rem; }
+      .layout-6 .mid { grid-template-columns: 1fr; }
+      .layout-9 .container { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="controls">
+    <div class="controls__group controls__layouts">
+      <span class="controls__label">Layout</span>
+      <button class="layout-btn active" data-layout="1">1·Centered</button>
+      <button class="layout-btn" data-layout="2">2·TextFwd</button>
+      <button class="layout-btn" data-layout="3">3·IndexCard</button>
+      <button class="layout-btn" data-layout="4">4·Successor</button>
+      <button class="layout-btn" data-layout="5">5·Editorial</button>
+      <button class="layout-btn" data-layout="6">6·Brutalist</button>
+      <button class="layout-btn" data-layout="7">7·Terminal</button>
+      <button class="layout-btn" data-layout="8">8·CardStack</button>
+      <button class="layout-btn" data-layout="9">9·Stickers</button>
+      <button class="layout-btn" data-layout="10">10·MiniCard</button>
+      <button class="layout-btn" data-layout="11">11·Resume</button>
+      <button class="layout-btn" data-layout="12">12·Timeline</button>
+      <button class="layout-btn" data-layout="13">13·Diagonal</button>
+      <button class="layout-btn" data-layout="14">14·Monogram</button>
+      <button class="layout-btn" data-layout="15">15·Notebook</button>
+    </div>
+    <div class="controls__group">
+      <span class="controls__label">Font</span>
+      <select id="fontSelect">
+        <optgroup label="Serif">
+          <option value="Cormorant Garamond" selected>Cormorant Garamond</option>
+          <option value="Newsreader">Newsreader</option>
+          <option value="Libre Caslon Text">Libre Caslon Text</option>
+          <option value="Crimson Pro">Crimson Pro</option>
+        </optgroup>
+        <optgroup label="Sans (your list)">
+          <option value="Montserrat">Montserrat</option>
+          <option value="Lato">Lato</option>
+          <option value="Plus Jakarta Sans">Plus Jakarta Sans</option>
+          <option value="Rethink Sans">Rethink Sans</option>
+          <option value="Inter">Inter</option>
+          <option value="Red Hat Display">Red Hat Display</option>
+          <option value="Kanit">Kanit</option>
+        </optgroup>
+        <optgroup label="New picks">
+          <option value="Albert Sans">Albert Sans</option>
+          <option value="Outfit">Outfit</option>
+          <option value="Sora">Sora</option>
+          <option value="DM Sans">DM Sans</option>
+        </optgroup>
+      </select>
+    </div>
+    <div class="controls__group">
+      <span class="controls__label">Palette</span>
+      <select id="paletteSelect">
+        <option value="warm-editorial" selected>Warm Editorial</option>
+        <option value="cool-minimal">Cool Minimal</option>
+        <option value="technical">Technical</option>
+        <option value="forest">Forest Earth</option>
+        <option value="sunset">Sunset (original blue)</option>
+        <option value="monochrome">Monochrome</option>
+        <option value="slate">Slate</option>
+        <option value="cream-brutalist">Cream Brutalist</option>
+        <option value="paper">Paper</option>
+        <option value="coastal">Coastal</option>
+      </select>
+    </div>
+    <div class="controls__group">
+      <span class="controls__label">Theme</span>
+      <select id="themeSelect">
+        <option value="system" selected>System</option>
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="stage" id="stage" data-active="1">
+
+    <!-- L1 Centered -->
+    <section class="layout layout-1">
+      <button class="theme-toggle" data-theme-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="theme-icon"><circle cx="12" cy="12" r="4"/></svg></button>
+      <div class="container">
+        <img src="https://i.imgur.com/4XM5DzA.jpg" alt="Portrait of Abed Rahman" class="portrait" />
+        <h1 class="name">Abed Rahman</h1>
+        <p class="tagline" data-tagline>Building ventures that make life a little better.</p>
+        <div class="rule"></div>
+        <ul class="links"><li><a href="https://www.vibeprobiotics.com">Vibe Probiotics</a></li><li><a href="https://www.alereit.com">AlereIT</a></li><li><a href="https://www.linkedin.com/in/abedrahman">LinkedIn</a></li><li><a href="https://github.com/abedrahman">GitHub</a></li><li><a href="/contact">Contact</a></li></ul>
+      </div>
+    </section>
+
+    <!-- L2 Text-Forward -->
+    <section class="layout layout-2">
+      <button class="theme-toggle" data-theme-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="theme-icon"></svg></button>
+      <div class="container">
+        <div class="header"><img src="https://i.imgur.com/4XM5DzA.jpg" alt="Portrait" class="portrait" /><h1 class="name">Abed Rahman</h1></div>
+        <p class="tagline" data-tagline>Building ventures that make life a little better.</p>
+        <p class="bio">Founder and technologist working across <em>information technology</em>, <em>consumer health</em>, and <em>technology consulting</em> — building things that help people, one venture at a time.</p>
+        <div class="rule"></div>
+        <div class="links-label">Elsewhere</div>
+        <ul class="links"><li><a href="https://www.vibeprobiotics.com">Vibe Probiotics</a></li><li><a href="https://www.alereit.com">AlereIT</a></li><li><a href="https://www.linkedin.com/in/abedrahman">LinkedIn</a></li><li><a href="https://github.com/abedrahman">GitHub</a></li><li><a href="/contact">Contact</a></li></ul>
+      </div>
+    </section>
+
+    <!-- L3 Index Card -->
+    <section class="layout layout-3">
+      <button class="theme-toggle" data-theme-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="theme-icon"></svg></button>
+      <div class="card">
+        <div class="portrait-side"></div>
+        <div class="content">
+          <div class="label">Founder · Technologist</div>
+          <h1 class="name">Abed Rahman</h1>
+          <p class="tagline" data-tagline>Building ventures that make life a little better.</p>
+          <div class="divider"></div>
+          <ul class="links">
+            <li><a href="https://www.vibeprobiotics.com">Vibe Probiotics</a></li>
+            <li><a href="https://www.alereit.com">AlereIT</a></li>
+            <li><a href="https://www.linkedin.com/in/abedrahman">LinkedIn</a></li>
+            <li><a href="https://github.com/abedrahman">GitHub</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- L4 Successor -->
+    <section class="layout layout-4">
+      <button class="theme-toggle" data-theme-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="theme-icon"></svg></button>
+      <div class="container">
+        <div class="marker">Founder · Technologist · Builder</div>
+        <div class="top"><img src="https://i.imgur.com/4XM5DzA.jpg" alt="Portrait" class="portrait" /><h1 class="name">Abed<br/>Rahman</h1></div>
+        <p class="tagline" data-tagline>Building ventures that make life a little better.</p>
+        <ul class="links-grid"><li><a href="https://www.vibeprobiotics.com">Vibe Probiotics</a></li><li><a href="https://www.alereit.com">AlereIT</a></li><li><a href="https://www.linkedin.com/in/abedrahman">LinkedIn</a></li><li><a href="https://github.com/abedrahman">GitHub</a></li><li><a href="/contact">Contact</a></li></ul>
+      </div>
+    </section>
+
+    <!-- L5 Editorial -->
+    <section class="layout layout-5">
+      <button class="theme-toggle" data-theme-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="theme-icon"></svg></button>
+      <div class="container">
+        <div class="left"><img src="https://i.imgur.com/4XM5DzA.jpg" alt="Portrait" class="portrait" /><div class="caption">Abed Rahman · 2026</div></div>
+        <div class="right">
+          <h1 class="name">Abed<br/>Rahman</h1>
+          <div class="underline"></div>
+          <p class="tagline" data-tagline>Building ventures that make life a little better.</p>
+          <p class="bio">Founder and technologist working across information technology, consumer health, and technology consulting — building things that help people, one venture at a time.</p>
+          <ul class="links"><li><a href="https://www.vibeprobiotics.com"><span>01</span> Vibe Probiotics</a></li><li><a href="https://www.alereit.com"><span>02</span> AlereIT</a></li><li><a href="https://www.linkedin.com/in/abedrahman"><span>03</span> LinkedIn</a></li><li><a href="https://github.com/abedrahman"><span>04</span> GitHub</a></li><li><a href="/contact"><span>05</span> Contact</a></li></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- L6 Brutalist -->
+    <section class="layout layout-6">
+      <button class="theme-toggle" data-theme-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="theme-icon"></svg></button>
+      <div class="container">
+        <div class="top-bar"><span class="label">↳ Portfolio · 2026</span><span class="label">N° 001</span></div>
+        <h1 class="massive-name">ABED<br/><span>RAHMAN</span></h1>
+        <div class="mid">
+          <img src="https://i.imgur.com/4XM5DzA.jpg" alt="Portrait" class="portrait" />
+          <p class="tagline" data-tagline>Building ventures that make life a little better.</p>
+        </div>
+        <div class="links-strip">
+          <a href="https://www.vibeprobiotics.com">Vibe</a>
+          <a href="https://www.alereit.com">AlereIT</a>
+          <a href="https://www.linkedin.com/in/abedrahman">LinkedIn</a>
+          <a href="https://github.com/abedrahman">GitHub</a>
+          <a href="/contact">Contact →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- L7 Terminal -->
+    <section class="layout layout-7">
+      <button class="theme-toggle" data-theme-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="theme-icon"></svg></button>
+      <div class="container">
+        <div class="term-window">
+          <div class="term-bar">
+            <span class="term-dot"></span><span class="term-dot"></span><span class="term-dot"></span>
+            <span class="term-title">~ abedrahman.com</span>
+          </div>
+          <div class="term-body">
+            <img src="https://i.imgur.com/4XM5DzA.jpg" alt="Portrait" class="portrait-ascii" />
+            <div class="typed"><span class="prompt">$</span> whoami</div>
+            <div class="output typed"><strong>Abed Rahman</strong> — Founder, technologist, builder</div>
+            <div class="typed"><span class="prompt">$</span> cat tagline.txt</div>
+            <div class="output typed" data-tagline>Building ventures that make life a little better.</div>
+            <div class="typed"><span class="prompt">$</span> ls ~/links/</div>
+            <ul class="links-list typed">
+              <li><a href="https://www.vibeprobiotics.com">vibe-probiotics</a></li>
+              <li><a href="https://www.alereit.com">alereit</a></li>
+              <li><a href="https://www.linkedin.com/in/abedrahman">linkedin</a></li>
+              <li><a href="https://github.com/abedrahman">github</a></li>
+              <li><a href="/contact">contact</a></li>
+            </ul>
+            <div class="typed"><span class="prompt">$</span><span class="cursor"></span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- L8 Card Stack -->
+    <section class="layout layout-8">
+      <button class="theme-toggle" data-theme-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="theme-icon"></svg></button>
+      <div class="card">
+        <img src="https://i.imgur.com/4XM5DzA.jpg" alt="Portrait" class="portrait" />
+        <h1 class="name">Abed Rahman</h1>
+        <p class="tagline" data-tagline>Building ventures that make life a little better.</p>
+        <ul class="links">
+          <li><a href="https://www.vibeprobiotics.com">Vibe Probiotics</a></li>
+          <li><a href="https://www.alereit.com">AlereIT</a></li>
+          <li><a href="https://www.linkedin.com/in/abedrahman">LinkedIn</a></li>
+          <li><a href="https://github.com/abedrahman">GitHub</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- L9 Sticker Sheet -->
+    <section class="layout layout-9">
+      <button class="theme-toggle" data-theme-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="theme-icon"></svg></button>
+      <div class="container">
+        <img src="https://i.imgur.com/4XM5DzA.jpg" alt="Portrait" class="portrait" />
+        <h1 class="name">Abed Rahman</h1>
+        <p class="tagline" data-tagline>Building ventures that make life a little better.</p>
+        <ul class="stickers">
+          <li><a href="https://www.vibeprobiotics.com">Vibe Probiotics</a></li>
+          <li><a href="https://www.alereit.com">AlereIT</a></li>
+          <li><a href="https://www.linkedin.com/in/abedrahman">LinkedIn</a></li>
+          <li><a href="https://github.com/abedrahman">GitHub</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- L10 Centered Minimal -->
+    <section class="layout layout-10">
+      <button class="theme-toggle" data-theme-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="theme-icon"></svg></button>
+      <div class="container">
+        <img src="https://i.imgur.com/4XM5DzA.jpg" alt="Portrait" class="portrait" />
+        <h1 class="name">Abed Rahman</h1>
+        <p class="tagline" data-tagline>Building ventures that make life a little better.</p>
+        <ul class="links">
+          <li><a href="https://www.vibeprobiotics.com">Vibe</a></li>
+          <li><a href="https://www.alereit.com">AlereIT</a></li>
+          <li><a href="https://www.linkedin.com/in/abedrahman">LinkedIn</a></li>
+          <li><a href="https://github.com/abedrahman">GitHub</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- L11 Resume / CV -->
+    <section class="layout layout-11">
+      <button class="theme-toggle" data-theme-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="theme-icon"></svg></button>
+      <div class="container">
+        <div class="header">
+          <h1 class="name">Abed Rahman</h1>
+          <p class="subtitle" data-tagline>Building ventures that make life a little better.</p>
+        </div>
+        <div class="section">
+          <div class="section-label">About</div>
+          <p class="section-body">Founder and technologist working across information technology, consumer health, and technology consulting — building things that help people, one venture at a time.</p>
+        </div>
+        <div class="section">
+          <div class="section-label">Ventures &amp; Profiles</div>
+          <ul class="links">
+            <li><a href="https://www.vibeprobiotics.com">Vibe Probiotics</a><span class="url">vibeprobiotics.com</span></li>
+            <li><a href="https://www.alereit.com">AlereIT</a><span class="url">alereit.com</span></li>
+            <li><a href="https://www.linkedin.com/in/abedrahman">LinkedIn</a><span class="url">/in/abedrahman</span></li>
+            <li><a href="https://github.com/abedrahman">GitHub</a><span class="url">@abedrahman</span></li>
+            <li><a href="/contact">Contact</a><span class="url">/contact</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- L12 Timeline -->
+    <section class="layout layout-12">
+      <button class="theme-toggle" data-theme-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="theme-icon"></svg></button>
+      <div class="container">
+        <div class="header">
+          <img src="https://i.imgur.com/4XM5DzA.jpg" alt="Portrait" class="portrait" />
+          <h1 class="name">Abed Rahman</h1>
+          <p class="tagline" data-tagline>Building ventures that make life a little better.</p>
+        </div>
+        <div class="timeline">
+          <div class="node"><a href="https://www.vibeprobiotics.com"><div class="node-title">Vibe Probiotics</div><div class="node-desc">Consumer health · probiotics &amp; wellness</div></a></div>
+          <div class="node"><a href="https://www.alereit.com"><div class="node-title">AlereIT</div><div class="node-desc">Technology consulting</div></a></div>
+          <div class="node"><a href="https://www.linkedin.com/in/abedrahman"><div class="node-title">LinkedIn</div><div class="node-desc">Professional profile</div></a></div>
+          <div class="node"><a href="https://github.com/abedrahman"><div class="node-title">GitHub</div><div class="node-desc">Code &amp; projects</div></a></div>
+          <div class="node"><a href="/contact"><div class="node-title">Contact</div><div class="node-desc">Send a message</div></a></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- L13 Diagonal -->
+    <section class="layout layout-13">
+      <button class="theme-toggle" data-theme-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="theme-icon"></svg></button>
+      <div class="container">
+        <img src="https://i.imgur.com/4XM5DzA.jpg" alt="Portrait" class="portrait" />
+        <h1 class="name">Abed Rahman</h1>
+        <p class="tagline" data-tagline>Building ventures that make life a little better.</p>
+        <ul class="links">
+          <li><a href="https://www.vibeprobiotics.com">Vibe</a></li>
+          <li><a href="https://www.alereit.com">AlereIT</a></li>
+          <li><a href="https://www.linkedin.com/in/abedrahman">LinkedIn</a></li>
+          <li><a href="https://github.com/abedrahman">GitHub</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- L14 Monogram -->
+    <section class="layout layout-14">
+      <button class="theme-toggle" data-theme-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="theme-icon"></svg></button>
+      <div class="container">
+        <div class="monogram">
+          <svg width="120" height="120" viewBox="0 0 120 120" fill="none" stroke-width="2" stroke-linecap="square">
+            <circle cx="60" cy="60" r="56" class="stroke" fill="none"/>
+            <path d="M30 80 L48 35 L60 60 L72 35 L90 80" class="stroke" fill="none" stroke-width="2.5"/>
+            <path d="M40 65 L80 65" class="accent" stroke-width="2.5"/>
+            <circle cx="60" cy="60" r="2.5" class="accent" fill="currentColor" stroke="none" style="color: var(--accent);"/>
+          </svg>
+        </div>
+        <h1 class="name">Abed Rahman</h1>
+        <p class="tagline" data-tagline>Building ventures that make life a little better.</p>
+        <div class="rule"></div>
+        <ul class="links">
+          <li><a href="https://www.vibeprobiotics.com">Vibe Probiotics</a></li>
+          <li><a href="https://www.alereit.com">AlereIT</a></li>
+          <li><a href="https://www.linkedin.com/in/abedrahman">LinkedIn</a></li>
+          <li><a href="https://github.com/abedrahman">GitHub</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+        <img src="https://i.imgur.com/4XM5DzA.jpg" alt="Abed Rahman" class="portrait-small" />
+      </div>
+    </section>
+
+    <!-- L15 Notebook -->
+    <section class="layout layout-15">
+      <button class="theme-toggle" data-theme-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="theme-icon"></svg></button>
+      <div class="page">
+        <span class="deckle"></span>
+        <div class="date">Tuesday, 2026 —</div>
+        <h1 class="name">Abed Rahman</h1>
+        <p class="tagline" data-tagline>Building ventures that make life a little better.</p>
+        <div class="body">
+          <img src="https://i.imgur.com/4XM5DzA.jpg" alt="Portrait" class="portrait" />
+          <div>
+            <p class="note">Founder &amp; technologist working across information technology, consumer health, and technology consulting — building things that help people, one venture at a time.</p>
+            <span class="margin-note">↳ here's where I am →</span>
+          </div>
+        </div>
+        <div class="links-label">find me here:</div>
+        <ul class="links">
+          <li><a href="https://www.vibeprobiotics.com">Vibe Probiotics</a></li>
+          <li><a href="https://www.alereit.com">AlereIT</a></li>
+          <li><a href="https://www.linkedin.com/in/abedrahman">LinkedIn</a></li>
+          <li><a href="https://github.com/abedrahman">GitHub</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // ===== Tagline rotation =====
+    const taglines = [
+      'Founder across IT, consumer health, and technology consulting.',
+      'Helping people through technology and thoughtful products.',
+      'Building ventures that make life a little better.',
+      'Founder, technologist, builder.'
+    ];
+    const dayIndex = new Date().getDay() % 4;
+    document.querySelectorAll('[data-tagline]').forEach(el => { el.textContent = taglines[dayIndex]; });
+
+    // ===== Layout switching =====
+    const stage = document.getElementById('stage');
+    document.querySelectorAll('.layout-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.layout-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        stage.setAttribute('data-active', btn.dataset.layout);
+      });
+    });
+
+    // ===== Font switching =====
+    const fontSelect = document.getElementById('fontSelect');
+    fontSelect.addEventListener('change', () => {
+      const font = fontSelect.value;
+      document.documentElement.style.setProperty('--font-main', `'${font}', Georgia, serif`);
+      document.documentElement.setAttribute('data-font', font);
+    });
+
+    // ===== Palette switching =====
+    const paletteSelect = document.getElementById('paletteSelect');
+    paletteSelect.addEventListener('change', () => {
+      document.documentElement.setAttribute('data-palette', paletteSelect.value);
+    });
+    document.documentElement.setAttribute('data-palette', 'warm-editorial');
+
+    // ===== Theme switching =====
+    const themeSelect = document.getElementById('themeSelect');
+    const html = document.documentElement;
+    const sunPath = `<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path>`;
+    const moonPath = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
+
+    function effectiveTheme() {
+      const t = themeSelect.value;
+      if (t === 'system') return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      return t;
+    }
+    function applyTheme() {
+      const t = themeSelect.value;
+      if (t === 'system') html.removeAttribute('data-theme');
+      else html.setAttribute('data-theme', t);
+      const eff = effectiveTheme();
+      document.querySelectorAll('.theme-icon').forEach(svg => {
+        svg.innerHTML = eff === 'dark' ? sunPath : moonPath;
+      });
+    }
+    themeSelect.addEventListener('change', applyTheme);
+    document.querySelectorAll('[data-theme-toggle]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const eff = effectiveTheme();
+        themeSelect.value = eff === 'dark' ? 'light' : 'dark';
+        applyTheme();
+      });
+    });
+    applyTheme();
+  </script>
+</body>
+</html>
